@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #F5F5F7;
+  --bg-surface: #FFFFFF;
+  --bg-secondary: #FAFAFB;
+  --text-primary: #1D1D1F;
+  --text-secondary: #6E6E73;
+  --divider: #D2D2D7;
+  --accent: #0071E3;
+  --accent-hover: #0077ED;
+  --success: #34C759;
+  --warning: #FF9F0A;
+  --error: #FF3B30;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--divider);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B0B0B5;
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-fast);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 bg-[#0071E3] text-white font-medium rounded-xl;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-primary:hover {
+    @apply bg-[#0077ED];
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 bg-[#F5F5F7] text-[#1D1D1F] font-medium rounded-xl border border-[#D2D2D7];
+    transition: all var(--transition-fast);
+  }
+
+  .btn-secondary:hover {
+    @apply bg-[#E8E8ED];
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-[#D2D2D7] rounded-xl text-[#1D1D1F] font-normal;
+    transition: all var(--transition-fast);
+  }
+
+  .input-field:focus {
+    @apply outline-none border-[#0071E3] ring-2 ring-[#0071E3]/10;
+  }
+
+  .input-field::placeholder {
+    @apply text-[#AEAEB2];
+  }
+
+  .badge-success {
+    @apply px-2.5 py-1 bg-[#34C759]/10 text-[#34C759] text-xs font-medium rounded-full;
+  }
+
+  .badge-warning {
+    @apply px-2.5 py-1 bg-[#FF9F0A]/10 text-[#FF9F0A] text-xs font-medium rounded-full;
+  }
+
+  .badge-error {
+    @apply px-2.5 py-1 bg-[#FF3B30]/10 text-[#FF3B30] text-xs font-medium rounded-full;
+  }
+
+  .badge-neutral {
+    @apply px-2.5 py-1 bg-[#F5F5F7] text-[#6E6E73] text-xs font-medium rounded-full;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium;
+    transition: all var(--transition-fast);
+  }
+
+  .nav-item:not(.active) {
+    @apply text-[#6E6E73];
+  }
+
+  .nav-item:not(.active):hover {
+    @apply bg-[#F5F5F7] text-[#1D1D1F];
+  }
+
+  .nav-item.active {
+    @apply bg-[#0071E3]/10 text-[#0071E3];
+  }
+
+  .stat-card {
+    @apply card p-5;
+  }
+
+  .table-row {
+    @apply border-b border-[#F5F5F7] transition-colors;
+  }
+
+  .table-row:hover {
+    @apply bg-[#F5F5F7]/50;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+.animate-count {
+  animation: countUp 0.25s ease-out forwards;
+}
