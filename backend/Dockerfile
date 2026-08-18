@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y \
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir --user --retries 5 --timeout 120 -r requirements.txt
 
 # Runtime stage
 FROM python:3.11-slim
