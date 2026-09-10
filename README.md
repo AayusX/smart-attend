@@ -1,64 +1,66 @@
-# SmartAttend - Face Recognition Attendance System
+# SmartAttend — Face Recognition Attendance System
 
-Production-grade real-time face recognition attendance system for schools.
+> Production-grade, real-time face recognition attendance for schools.
+> A camera watches the entrance; enrolled students are detected, liveness-checked,
+> and marked present automatically — with a live WebSocket dashboard.
 
 ## Features
 
-- **30+ FPS** real-time face detection and recognition
-- **Multi-threaded pipeline** for smooth camera processing
-- **Multi-face tracking** with ByteTrack-inspired centroid algorithm
-- **Multi-frame verification** prevents false positives
-- **Liveness detection** rejects photos and videos
-- **Duplicate prevention** with configurable cooldown
-- **WebSocket live updates** for instant dashboard refresh
-- **Premium light UI** with smooth animations
-- **Role-based access** (Admin / Teacher / Viewer)
-- **Attendance reports** with CSV export
-- **Audit logging** for security events
+- 👁️ **Real-time** face detection & recognition at 30+ FPS
+- 🧵 **Multi-threaded pipeline** for smooth camera processing
+- 👥 **Multi-face tracking** — ByteTrack-inspired centroid algorithm (20+ faces)
+- ✅ **Multi-frame verification** prevents false positives before marking
+- 🛡️ **Liveness detection** rejects photos and screen replays
+- ♻️ **Duplicate prevention** with configurable cooldown (default 5 min)
+- 📡 **WebSocket live updates** — attendance events pushed to the dashboard
+- 🎨 **Premium light UI** with smooth animations
+- 👤 **Role-based access** — Admin / Teacher / Viewer
+- 📊 **Attendance reports** with CSV export
+- 🧾 **Audit logging** for security events
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Python 3.11+, FastAPI, SQLAlchemy |
-| AI | InsightFace (buffalo_sc), ONNX Runtime, OpenCV |
-| Database | SQLite (dev), PostgreSQL (prod) |
-| Frontend | React 18, TypeScript, Tailwind CSS |
-| Real-time | WebSockets |
-| Deploy | Docker Compose, Nginx |
+| Layer      | Technology                                                   |
+| ---------- | ------------------------------------------------------------ |
+| Backend    | Python 3.11+, FastAPI, Uvicorn, SQLAlchemy 2.0 (async)       |
+| AI         | InsightFace (buffalo_sc), ONNX Runtime, OpenCV, NumPy        |
+| Database   | SQLite / aiosqlite (dev), PostgreSQL (prod), Alembic         |
+| Auth       | JWT (python-jose), passlib + bcrypt                          |
+| Frontend   | React 18, TypeScript, Vite, Tailwind CSS 3.4, React Router 6, Recharts |
+| Realtime   | WebSockets                                                   |
+| Deploy     | Docker Compose (backend + frontend + Nginx), deploy scripts  |
 
 ## Performance
 
-| Metric | Target |
-|--------|--------|
-| Camera FPS | 30 FPS |
-| Detection | 15-30ms per frame |
-| Recognition | 10-25ms per face (batch) |
-| Total pipeline | < 50ms |
-| Max simultaneous faces | 20+ |
+| Metric                   | Target                 |
+| ------------------------ | ---------------------- |
+| Camera FPS               | 30 FPS                 |
+| Detection                | 15–30 ms per frame     |
+| Recognition              | 10–25 ms per face (batch) |
+| Total pipeline           | < 50 ms                |
+| Max simultaneous faces   | 20+                    |
 
 ## Quick Start
 
-### Docker (Recommended)
+### Docker (recommended)
 
 ```bash
-git clone https://github.com/aayusx/smart-attend.git
+git clone https://github.com/AayusX/smart-attend.git
 cd smart-attend
 cp .env.example .env
 docker-compose up -d
 ```
 
-### Local Development
+### Local development
 
 ```bash
 # Backend
 cd backend
-python -m venv venv
-source venv/bin/activate
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 
-# Frontend
+# Frontend (separate terminal)
 cd frontend
 npm install
 npm run dev
@@ -66,22 +68,20 @@ npm run dev
 
 ### Access
 
-- Frontend: http://localhost:3000
-- API Docs: http://localhost:8000/docs
+- Frontend: <http://localhost:3000>
+- API docs: <http://localhost:8000/docs>
 
-## First Steps
+### First steps
 
-1. Create admin:
+1. Create an admin user:
+
 ```bash
 curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123","role":"admin"}'
 ```
 
-2. Login at http://localhost:3000
-3. Add students
-4. Enroll faces
-5. Start camera
+2. Log in at <http://localhost:3000> → add students → enroll faces → start camera.
 
 ## Architecture
 
@@ -98,21 +98,43 @@ Camera (30 FPS)
                                                     [Attendance Engine]
                                                               |
                                                               v
-                                                      [Database + WebSocket]
+                                                    [Database + WebSocket]
                                                               |
                                                               v
-                                                       [React Dashboard]
+                                                     [React Dashboard]
+```
+
+## Project Structure
+
+```
+├── docker-compose.yml      # backend + frontend + nginx
+├── .env.example            # documented environment variables
+├── backend/
+│   ├── app/
+│   │   ├── api/            # auth, students, attendance, enrollment, reports
+│   │   ├── models/         # SQLAlchemy models
+│   │   ├── schemas/        # Pydantic schemas
+│   │   ├── services/       # recognition, camera, tracker, enrollment
+│   │   └── websocket/      # WebSocket connection manager
+│   └── Dockerfile
+├── frontend/
+│   ├── src/pages/          # Dashboard, Students, Attendance, Enrollment, Reports, Login
+│   └── Dockerfile
+├── nginx/default.conf      # reverse proxy
+└── scripts/
+    ├── deploy.sh           # one-command deployment
+    └── backup.sh           # DB + config backup (7-day rotation)
 ```
 
 ## Performance Optimizations
 
-1. **Multi-threaded capture** - Camera runs in separate thread
-2. **Frame skipping** - Detection runs every N frames
-3. **Resolution scaling** - Detect at 640px, not full 1280px
-4. **Batch recognition** - Process multiple faces at once
-5. **Recognition caching** - Don't re-recognize verified faces
-6. **ONNX optimizations** - Graph optimization + thread pinning
-7. **Smart frame selection** - Only recognize when needed
+1. **Multi-threaded capture** — camera runs in its own thread
+2. **Frame skipping** — detection runs every N frames
+3. **Resolution scaling** — detect at 640px, not 1280px
+4. **Batch recognition** — multiple faces processed at once
+5. **Recognition caching** — verified faces aren't re-recognized
+6. **ONNX optimizations** — graph optimization + thread pinning
+7. **Smart frame selection** — recognize only when needed
 
 ## License
 
